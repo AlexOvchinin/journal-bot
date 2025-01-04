@@ -31,36 +31,36 @@ jobs:
         path: ./journalbot
         if-no-files-found: error
 
-#   deploy:
-#     runs-on: ubuntu-latest
-#     needs: build
-#     if: github.ref == 'refs/heads/main'
-#     steps:
-#       - uses: actions/checkout@v4
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
 
-#       - name: Download binary artifact
-#         uses: actions/download-artifact@v4
-#         with:
-#           name: pingbot-binary
+      - name: Download binary artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: journalbot-binary
 
-#       - name: Make binary executable
-#         run: chmod +x ./pingbot
+      - name: Make binary executable
+        run: chmod +x ./journalbot
         
-#       - name: Copy artifact to the host
-#         uses: appleboy/scp-action@v0.1.7
-#         with:
-#           host: ${{ secrets.DEPLOY_HOST }}
-#           username: ${{ secrets.DEPLOY_HOST_SSH_USER }}
-#           key: ${{ secrets.DEPLOY_HOST_PRIVATE_KEY }}
-#           source: pingbot
-#           target: /apps/pingbot
+      - name: Copy artifact to the host
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_HOST_SSH_USER }}
+          key: ${{ secrets.DEPLOY_HOST_PRIVATE_KEY }}
+          source: journalbot
+          target: /apps/journalbot
           
-#       - name: Restart systemctl service
-#         uses: appleboy/ssh-action@v1.0.3
-#         with:
-#           host: ${{ secrets.DEPLOY_HOST }}
-#           username: ${{ secrets.DEPLOY_HOST_SSH_USER }}
-#           key: ${{ secrets.DEPLOY_HOST_PRIVATE_KEY }}
-#           script: |
-#             sudo systemctl restart pingbot.service
-#             sudo systemctl status pingbot.service
+      - name: Restart systemctl service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_HOST_SSH_USER }}
+          key: ${{ secrets.DEPLOY_HOST_PRIVATE_KEY }}
+          script: |
+            sudo systemctl restart journalbot.service
+            sudo systemctl status journalbot.service
