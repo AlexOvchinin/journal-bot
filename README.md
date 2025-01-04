@@ -9,4 +9,5 @@ Private journal for the family members
     - ~~users~~
 - logging
 - ~~build and test~~
-- deploy and run
+- ~~deploy and run~~
+- add second user

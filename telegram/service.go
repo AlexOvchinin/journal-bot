@@ -44,6 +44,7 @@ func initBot() *telebot.Bot {
 func loadSheetsMapping() map[string]string {
 	result := make(map[string]string)
 	result[os.Getenv("FIRST_USER_USERNAME")] = os.Getenv("FIRST_USER_SPREADSHEET_ID")
+	result[os.Getenv("SECOND_USER_USERNAME")] = os.Getenv("SECOND_USER_SPREADSHEET_ID")
 	return result
 }
 
