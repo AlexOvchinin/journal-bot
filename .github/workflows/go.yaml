@@ -27,8 +27,8 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.4
       with:
-        name: pingbot-binary
-        path: ./pingbot
+        name: journalbot-binary
+        path: ./journalbot
         if-no-files-found: error
 
 #   deploy:

@@ -18,7 +18,7 @@ type Client struct {
 	Service *sheets.Service
 }
 
-func CreateClient() SpreadsheetClient {
+func NewClient() SpreadsheetClient {
 	keyJsonBase64 := os.Getenv("GOOGLE_SA_KEY")
 	credBytes, err := base64.StdEncoding.DecodeString(keyJsonBase64)
 	if err != nil {
