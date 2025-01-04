@@ -39,8 +39,7 @@ func (updater *Updater) ProcessUpdate(spreadsheetId string, timestamp int64, con
 		return errors.New(errorUpdate)
 	}
 
-	filledDateContent, _ := sheet.GetContent(sheets.GetCoordsCell(row-1, col))
-	if row > 0 && filledDateContent == currentDate {
+	if isUpdatable(sheet, currentDate, row, col) {
 		err := sheet.Update(sheets.GetCoordsCell(row-1, col+1), content)
 		if err != nil {
 			return errors.New(errorUpdate)
@@ -53,4 +52,17 @@ func (updater *Updater) ProcessUpdate(spreadsheetId string, timestamp int64, con
 	}
 
 	return nil
+}
+
+func isUpdatable(sheet sheets.Sheet, currentDate string, row int32, col int32) bool {
+	if row == 0 {
+		return false
+	}
+
+	sheetDate, err := sheet.GetContent(sheets.GetCoordsCell(row-1, col))
+	if err != nil {
+		return false
+	}
+
+	return currentDate == sheetDate
 }
