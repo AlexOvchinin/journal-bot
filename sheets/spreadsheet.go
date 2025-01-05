@@ -1,13 +1,14 @@
 package sheets
 
 import (
-	"fmt"
+	"errors"
 
+	"go.uber.org/zap"
 	"google.golang.org/api/sheets/v4"
 )
 
 type Spreadsheet interface {
-	GetSheet(index int) Sheet
+	GetFirstSheet() Sheet
 }
 
 type spreadsheetImpl struct {
@@ -15,9 +16,9 @@ type spreadsheetImpl struct {
 	service     *sheets.Service
 }
 
-func (spreadsheet *spreadsheetImpl) GetSheet(index int) Sheet {
+func (spreadsheet *spreadsheetImpl) GetFirstSheet() Sheet {
 	if len(spreadsheet.spreadsheet.Sheets) == 0 {
-		fmt.Println("Spreadsheet contains no sheets")
+		logger.Error("Spreadsheet contains no sheets", zap.Error(errors.New("")))
 		return nil
 	}
 

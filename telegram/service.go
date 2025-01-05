@@ -2,13 +2,14 @@ package telegram
 
 import (
 	"fmn/journalbot/updater"
-	"fmt"
-	"log"
 	"os"
 	"time"
 
+	"go.uber.org/zap"
 	"gopkg.in/telebot.v3"
 )
+
+var logger = zap.Must(zap.NewDevelopment()).Sugar()
 
 type Service struct {
 	bot     *telebot.Bot
@@ -35,7 +36,7 @@ func initBot() *telebot.Bot {
 
 	b, err := telebot.NewBot(pref)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 		return nil
 	}
 
@@ -54,6 +55,6 @@ func (service *Service) initHandlers() {
 }
 
 func (service *Service) Start() {
-	fmt.Println("Starting telegram listener")
+	logger.Info("Starting telegram listener")
 	service.bot.Start()
 }

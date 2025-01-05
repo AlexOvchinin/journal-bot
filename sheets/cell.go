@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+
+	"go.uber.org/zap"
 )
 
 var cellAddressRegexp = regexp.MustCompile(`^[A-Z]+[1-9]\d*$`)
 
 func GetCellCoords(cell string) (int32, int32, error) {
 	if !cellAddressRegexp.MatchString(cell) {
-		fmt.Printf("Invalid cell address: %v", cell)
+		logger.Errorf("Invalid cell address: %v", cell)
 		return 0, 0, errors.New("invalid-cell-address-format")
 	}
 
@@ -42,7 +44,7 @@ func columnToNumber(column string) int32 {
 func rowToNumber(row string) int32 {
 	result, err := strconv.ParseInt(row, 10, 32)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error(zap.Error(err))
 	}
 	return int32(result - 1)
 }

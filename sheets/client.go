@@ -3,9 +3,9 @@ package sheets
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"os"
 
+	"go.uber.org/zap"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
 )
@@ -22,15 +22,14 @@ func NewClient() SpreadsheetClient {
 	keyJsonBase64 := os.Getenv("GOOGLE_SA_KEY")
 	credBytes, err := base64.StdEncoding.DecodeString(keyJsonBase64)
 	if err != nil {
-		// log.Error(err)
-		fmt.Println(err)
+		logger.Error(err)
 		return nil
 	}
 
 	ctx := context.Background()
 	sheetsService, err := sheets.NewService(ctx, option.WithCredentialsJSON(credBytes))
 	if err != nil {
-		fmt.Println(err)
+		logger.Error(zap.Error(err))
 		return nil
 	}
 
@@ -42,7 +41,7 @@ func NewClient() SpreadsheetClient {
 func (client *Client) OpenSpreadsheet(spreadsheetId string) (Spreadsheet, error) {
 	spreadsheet, err := client.Service.Spreadsheets.Get(spreadsheetId).Do()
 	if err != nil || spreadsheet.HTTPStatusCode != 200 {
-		fmt.Println(err)
+		logger.Errorf("Error while opening spreasheet with id %v", spreadsheetId, zap.Error(err))
 		return nil, err
 	}
 

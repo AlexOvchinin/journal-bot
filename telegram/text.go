@@ -1,8 +1,6 @@
 package telegram
 
 import (
-	"fmt"
-
 	"gopkg.in/telebot.v3"
 )
 
@@ -10,8 +8,8 @@ func (service *Service) HandleText(ctx telebot.Context) error {
 	username := ctx.Chat().Username
 	spreadsheetId, found := service.mapping[username]
 	if !found {
-		fmt.Printf("User %v is not supported!", username)
-		return nil
+		logger.Infof("User %v is not supported!", username)
+		return ctx.Reply("Неизвестный пользователь")
 	}
 
 	time := ctx.Message().Unixtime

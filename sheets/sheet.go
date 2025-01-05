@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"go.uber.org/zap"
 	"google.golang.org/api/sheets/v4"
 )
 
@@ -34,7 +35,7 @@ func (sheet *sheetImpl) GetNextEmptyCell() (string, error) {
 		Context(context.Background()).
 		Do()
 	if err != nil || response.HTTPStatusCode != 200 {
-		fmt.Println(err)
+		logger.Error("Error while appending values", zap.Error(err))
 		return "", errors.New(errorSpreadsheet)
 	}
 
@@ -64,7 +65,7 @@ func (sheet *sheetImpl) GetContent(range_ string) (string, error) {
 		Do()
 
 	if err != nil || result.HTTPStatusCode != 200 {
-		fmt.Println(err)
+		logger.Error("Error while getting cells content", zap.Error(err))
 		return "", errors.New(errorSpreadsheet)
 	}
 
@@ -83,6 +84,7 @@ func (sheet *sheetImpl) Append(rows [][]interface{}) error {
 		Context(context.Background()).
 		Do()
 	if err != nil || response2.HTTPStatusCode != 200 {
+		logger.Error("Error while appending values", zap.Error(err))
 		return errors.New(errorSpreadsheet)
 	}
 
@@ -96,7 +98,8 @@ func formatRangeEscaped(sheetTitle string, range_ string) string {
 func (sheet *sheetImpl) Update(cell string, content string) error {
 	currentContent, err := sheet.GetContent(cell)
 	if err != nil {
-		return err
+		logger.Error("Error while getting content", zap.Error(err))
+		return errors.New(errorSpreadsheet)
 	}
 
 	valueRange := &sheets.ValueRange{
@@ -109,6 +112,7 @@ func (sheet *sheetImpl) Update(cell string, content string) error {
 		Do()
 
 	if err != nil || response.HTTPStatusCode != 200 {
+		logger.Error("Error while updating values", zap.Error(err))
 		return errors.New(errorSpreadsheet)
 	}
 

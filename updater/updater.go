@@ -32,7 +32,7 @@ func (updater *Updater) ProcessUpdate(spreadsheetId string, timestamp int64, con
 		return errors.New(errorUpdate)
 	}
 
-	sheet := spreadsheet.GetSheet(0)
+	sheet := spreadsheet.GetFirstSheet()
 	emptyCell, err := sheet.GetNextEmptyCell()
 	if err != nil {
 		return errors.New(errorUpdate)
