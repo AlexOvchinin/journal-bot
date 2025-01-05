@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmn/journalbot/updater"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -53,5 +54,6 @@ func (service *Service) initHandlers() {
 }
 
 func (service *Service) Start() {
+	fmt.Println("Starting telegram listener")
 	service.bot.Start()
 }

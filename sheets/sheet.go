@@ -37,12 +37,24 @@ func (sheet *sheetImpl) GetNextEmptyCell() (string, error) {
 		return "", errors.New(errorSpreadsheet)
 	}
 
-	before, after, found := strings.Cut(response.Updates.UpdatedRange, sheet.title+"!")
-	if found {
-		return after, nil
-	} else {
-		return before, nil
+	return tryRemoveSheetTitle(response.Updates.UpdatedRange, sheet.title), nil
+}
+
+func tryRemoveSheetTitle(range_ string, sheetTitle string) string {
+	escapedTitle := fmt.Sprintf("'%v'!", sheetTitle)
+
+	if strings.Contains(range_, escapedTitle) {
+		_, after, _ := strings.Cut(range_, escapedTitle)
+		return after
 	}
+
+	title := sheetTitle + "!"
+	if strings.Contains(range_, title) {
+		_, after, _ := strings.Cut(range_, title)
+		return after
+	}
+
+	return range_
 }
 
 func (sheet *sheetImpl) GetContent(range_ string) (string, error) {
@@ -76,8 +88,8 @@ func (sheet *sheetImpl) Append(rows [][]interface{}) error {
 	return nil
 }
 
-func formatRange(sheetTitle string, range_ string) string {
-	return fmt.Sprintf("%s!%s", sheetTitle, range_)
+func formatRangeEscaped(sheetTitle string, range_ string) string {
+	return fmt.Sprintf("'%s'!%s", sheetTitle, range_)
 }
 
 func (sheet *sheetImpl) Update(cell string, content string) error {
@@ -91,7 +103,7 @@ func (sheet *sheetImpl) Update(cell string, content string) error {
 	}
 
 	response, err := sheet.service.Spreadsheets.Values.
-		Update(sheet.spreadsheet.SpreadsheetId, formatRange(sheet.title, cell), valueRange).
+		Update(sheet.spreadsheet.SpreadsheetId, formatRangeEscaped(sheet.title, cell), valueRange).
 		ValueInputOption("RAW").
 		Do()
 
