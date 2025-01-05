@@ -3,12 +3,12 @@ package updater
 import (
 	"errors"
 	"fmn/journalbot/sheets"
+	"fmt"
+	"strings"
 	"time"
 )
 
 const (
-	layoutISO = "2006-01-02"
-	location  = "Asia/Yekaterinburg"
 	// errors
 	errorUpdate = "update-error"
 )
@@ -23,9 +23,11 @@ func NewUpdater() *Updater {
 	}
 }
 
+var loc, _ = time.LoadLocation("Asia/Yekaterinburg")
+
 func (updater *Updater) ProcessUpdate(spreadsheetId string, timestamp int64, content string) error {
-	loc, _ := time.LoadLocation(location)
-	currentDate := time.Unix(timestamp, 0).In(loc).Format(layoutISO)
+	currentDate := time.Unix(timestamp, 0).In(loc).Format(time.DateOnly)
+	formattedMessage := formatMessage(timestamp, content)
 
 	spreadsheet, err := updater.Client.OpenSpreadsheet(spreadsheetId)
 	if err != nil {
@@ -44,12 +46,12 @@ func (updater *Updater) ProcessUpdate(spreadsheetId string, timestamp int64, con
 	}
 
 	if isUpdatable(sheet, currentDate, row, col) {
-		err := sheet.Update(sheets.GetCoordsCell(row-1, col+1), content)
+		err := sheet.Update(sheets.GetCoordsCell(row-1, col+1), formattedMessage)
 		if err != nil {
 			return errors.New(errorUpdate)
 		}
 	} else {
-		err := sheet.Append([][]interface{}{{currentDate, content}})
+		err := sheet.Append([][]interface{}{{currentDate, formattedMessage}})
 		if err != nil {
 			return errors.New(errorUpdate)
 		}
@@ -69,4 +71,10 @@ func isUpdatable(sheet sheets.Sheet, currentDate string, row int32, col int32) b
 	}
 
 	return currentDate == sheetDate
+}
+
+func formatMessage(timestamp int64, content string) string {
+	time := time.Unix(timestamp, 0).In(loc).Format(time.TimeOnly)
+	processedContent := strings.ReplaceAll(content, "\n", "\n    ")
+	return fmt.Sprintf("[%v]:\n    %v", time, processedContent)
 }
