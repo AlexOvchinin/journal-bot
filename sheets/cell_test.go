@@ -43,9 +43,9 @@ func TestGetCoordsCell(t *testing.T) {
 		column int32
 		want   string
 	}{
-		// {"A1", 0, 0, "A1"},
-		// {"A2", 1, 0, "A2"},
-		// {"B1", 0, 1, "B1"},
+		{"A1", 0, 0, "A1"},
+		{"A2", 1, 0, "A2"},
+		{"B1", 0, 1, "B1"},
 		{"AB33", 32, 27, "AB33"},
 	}
 
