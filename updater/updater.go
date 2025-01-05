@@ -33,7 +33,11 @@ func (updater *Updater) ProcessUpdate(spreadsheetId string, timestamp int64, con
 	}
 
 	sheet := spreadsheet.GetSheet(0)
-	emptyCell, _ := sheet.GetNextEmptyCell()
+	emptyCell, err := sheet.GetNextEmptyCell()
+	if err != nil {
+		return errors.New(errorUpdate)
+	}
+
 	row, col, err := sheets.GetCellCoords(emptyCell)
 	if err != nil {
 		return errors.New(errorUpdate)

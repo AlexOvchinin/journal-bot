@@ -34,6 +34,7 @@ func (sheet *sheetImpl) GetNextEmptyCell() (string, error) {
 		Context(context.Background()).
 		Do()
 	if err != nil || response.HTTPStatusCode != 200 {
+		fmt.Println(err)
 		return "", errors.New(errorSpreadsheet)
 	}
 

@@ -10,4 +10,5 @@ Private journal for the family members
 - logging
 - ~~build and test~~
 - ~~deploy and run~~
-- add second user
+- ~~add second user~~
+- add timestamps to each separate message
